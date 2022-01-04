@@ -30,13 +30,13 @@ describe("/messages", () => {
         });
     });
   });
-  describe("POST /sendMessage", () => {
+  describe("POST /send", () => {
     it("it should send a message to test2@test.com from test@test.com", (done) => {
       let message = {
         email: "test2@test.com",
         message: "Hello."
       };
-      chai.request(app).post("/api/messages/sendMessage")
+      chai.request(app).post("/api/messages/send")
       .auth(token1, { type: "bearer" })
       .send(message)
       .end((err, res) => {
@@ -44,12 +44,12 @@ describe("/messages", () => {
         done();
       });
     });
-    it("it should NOT send a message to test@test.com from test@test.com (cannot message yourself)", (done) => {
+    it("it should NOT send a message to test@test.com (cannot message yourself)", (done) => {
       let message = {
         email: "test@test.com",
         message: "Hello."
       };
-      chai.request(app).post("/api/messages/sendMessage")
+      chai.request(app).post("/api/messages/send")
       .auth(token1, { type: "bearer" })
       .send(message)
       .end((err, res) => {
@@ -58,12 +58,12 @@ describe("/messages", () => {
         done();
       });
     });
-    it("it should NOT send a message to test2@test.com from test@test.com (message field is required)", (done) => {
+    it("it should NOT send a message to test2@test.com (message field is required)", (done) => {
       let message = {
         email: "test2@test.com",
         message: ""
       };
-      chai.request(app).post("/api/messages/sendMessage")
+      chai.request(app).post("/api/messages/send")
       .auth(token1, { type: "bearer" })
       .send(message)
       .end((err, res) => {
@@ -72,17 +72,49 @@ describe("/messages", () => {
         done();
       });
     });
-    it("it should NOT send a message to testA@test.com from test@test.com (user not found)", (done) => {
+    it("it should NOT send a message to testA@test.com (user not found)", (done) => {
       let message = {
         email: "testA@test.com",
         message: "Hello."
       };
-      chai.request(app).post("/api/messages/sendMessage")
+      chai.request(app).post("/api/messages/send")
       .auth(token1, { type: "bearer" })
       .send(message)
       .end((err, res) => {
         expect(res.status).to.eq(400);
         expect(res.body.email).to.eq("User not found!");
+        done();
+      });
+    });
+  });
+  describe("GET /", () => {
+    it("it should get all messages for test@test.com", (done) => {
+      chai.request(app).get("/api/messages")
+      .auth(token1, { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        expect(res.body.length).to.eq(0);
+        done();
+      });
+    });
+    it("it should get all messages for test2@test.com", (done) => {
+      chai.request(app).get("/api/messages")
+      .auth(token2, { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        expect(res.body.length).to.eq(1);
+        done();
+      });
+    });
+    it("it should NOT get all messages for unknown user (invalid token)", (done) => {
+      chai.request(app).get("/api/messages")
+      .auth("broken.token", { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(401);
+        expect(res.body.error).to.eq("Invalid Token");
         done();
       });
     });

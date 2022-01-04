@@ -15,7 +15,7 @@ exports.sendMessage = (req, res) => {
   }
 
   //Find receiver
-  User.findOne({ email: req.body.email }).then(user => {
+  User.findOne({ email: req.body.email }).select("messages").then(user => {
     if (!user) {
       return res.status(400).json({ email: "User not found!" });
     }
@@ -34,5 +34,10 @@ exports.sendMessage = (req, res) => {
 };
 
 exports.getMessages = (req, res) => {
-
+  User.findOne({ _id: req.user.id }).select("messages").populate("messages").then(user => {
+    if (!user) {
+      return res.status(400).json({ email: "User not found!" });
+    }
+    res.status(200).json(user.messages);
+  }).catch(err => console.log(err));
 }

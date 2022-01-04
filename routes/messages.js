@@ -6,6 +6,7 @@ const auth = require("../middleware/authorize");
 const messagesController = require("../controllers/messagesController.js");
 
 //Routes
-router.post("/sendMessage", auth, messagesController.sendMessage);
+router.post("/send", auth, messagesController.sendMessage);
+router.get("/", auth, messagesController.getMessages);
 
 module.exports = router;
