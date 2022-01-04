@@ -1,0 +1,38 @@
+{
+  "name": "speerassessment",
+  "version": "1.0.0",
+  "description": "Speer Technologies Assessment: Twitter",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "SET NODE_ENV=test&& mocha tests/index.test.js --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aspalvieri/SpeerAssessment.git"
+  },
+  "author": "Alex Spalvieri",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aspalvieri/SpeerAssessment/issues"
+  },
+  "homepage": "https://github.com/aspalvieri/SpeerAssessment#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "is-empty": "^1.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.4",
+    "passport": "^0.5.2",
+    "passport-jwt": "^4.0.0",
+    "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "jwt-decode": "^3.1.2",
+    "mocha": "^9.1.3"
+  }
+}
