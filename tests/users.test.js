@@ -29,6 +29,19 @@ describe("/users", () => {
         done();
       });
     });
+    it("it should create a new user (test2@test.com)", (done) => {
+      let user = {
+        email: "test2@test.com",
+        password: "123456",
+        password2: "123456"
+      };
+      chai.request(app).post("/api/users/register")
+      .send(user)
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        done();
+      });
+    });
     it("it should NOT create a new user (email already exists)", (done) => {
       let user = {
         email: "test@test.com",
@@ -45,7 +58,7 @@ describe("/users", () => {
     });
     it("it should NOT create a new user (password too short)", (done) => {
       let user = {
-        email: "test2@test.com",
+        email: "test3@test.com",
         password: "12345",
         password2: "12345"
       };
@@ -59,7 +72,7 @@ describe("/users", () => {
     });
     it("it should NOT create a new user (invalid email)", (done) => {
       let user = {
-        email: "test2",
+        email: "test3",
         password: "123456",
         password2: "123456"
       };
@@ -88,7 +101,7 @@ describe("/users", () => {
     });
     it("it should NOT login user (user not found)", (done) => {
       let user = {
-        email: "test2@test.com",
+        email: "notfound@test.com",
         password: "123456"
       };
       chai.request(app).post("/api/users/login")
