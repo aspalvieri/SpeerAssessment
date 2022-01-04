@@ -36,9 +36,16 @@ app.use(passport.initialize());
 //Passport config
 require("./middleware/passport")(passport);
 
+//Serve the static files from the React app
+app.use(express.static(path.join(__dirname, "client/build")));
+
 //Routes
 const routes = require("./routes/index");
 app.use("/api", routes);
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
 
 //Set port, listen for requests
 const port = process.env.PORT || 5000;
