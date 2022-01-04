@@ -30,6 +30,7 @@ exports.getTweets = (req, res) => {
   //Get the email from either the request, or the logged in user
   const email = req.params.email || req.user.email;
 
+  //Have to use User.find instead of Tweet.find because we're given the email, not ID
   User.findOne({ email: email }).select("tweets").populate("tweets").then(user => {
     if (!user) {
       return res.status(400).json({ email: "User not found!" });
@@ -63,5 +64,32 @@ exports.updateTweet = (req, res) => {
       return res.status(400).json({ tweet: "Tweet not found" });
     }
     res.status(200).json(tweet);
+  }).catch(err => console.log(err));
+};
+
+exports.likeTweet = (req, res) => {
+  Tweet.findOne({ _id: req.params.id }).then(tweet => {
+    if (!tweet) {
+      return res.status(400).json({ error: "Tweet not found!" });
+    }
+
+    let found = false;
+    //If we have liked it already, unlike it:
+    tweet.likes = tweet.likes.filter(like => {
+      if (like.toString() === req.user.id) {
+        found = true;
+        return false;
+      }
+      return true;
+    });
+
+    //If we haven't liked the tweet, like it
+    if (!found) {
+      tweet.likes.push(req.user.id);
+    }
+
+    tweet.save().then(savedTweet => {
+      res.status(200).json(savedTweet);
+    }).catch(err => console.log(err));
   }).catch(err => console.log(err));
 };

@@ -14,4 +14,7 @@ router.get("/:email", tweetsController.getTweets);
 router.post("/delete/:id", auth, tweetsController.deleteTweet);
 router.post("/update/:id", auth, tweetsController.updateTweet);
 
+//Handles liking/unliking a post
+router.post("/like/:id", auth, tweetsController.likeTweet);
+
 module.exports = router;

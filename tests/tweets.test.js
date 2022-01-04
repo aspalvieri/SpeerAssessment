@@ -10,8 +10,11 @@ const Tweet = mongoose.model("tweets");
 chai.use(chaiHttp);
 
 describe("/tweets", () => {
-  let user1, token1, user2, token2;
+  let user1, token1;
+  let user2, token2;
   let user1tweet1, user1tweet2;
+  let user2tweet1;
+
   before((done) => {
     //Delete all messages
     Tweet.deleteMany({}, (err) => {
@@ -66,6 +69,7 @@ describe("/tweets", () => {
       .auth(token2, { type: "bearer" })
       .send(message)
       .end((err, res) => {
+        user2tweet1 = res.body.tweets[0];
         expect(res.status).to.eq(200);
         done();
       });
@@ -110,11 +114,19 @@ describe("/tweets", () => {
     });
     it("it should get the tweets for test2@test.com", (done) => {
       chai.request(app).get("/api/tweets/test2@test.com")
-      .auth(token1, { type: "bearer" })
       .send()
       .end((err, res) => {
         expect(res.status).to.eq(200);
         expect(res.body.length).to.eq(1);
+        done();
+      });
+    });
+    it("it should NOT get the tweets for testA@test.com (user not found)", (done) => {
+      chai.request(app).get("/api/tweets/testA@test.com")
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(400);
+        expect(res.body.email).to.eq("User not found!");
         done();
       });
     });
@@ -171,6 +183,49 @@ describe("/tweets", () => {
       .end((err, res) => {
         expect(res.status).to.eq(200);
         expect(res.body.tweets.length).to.eq(1);
+        done();
+      });
+    });
+  });
+  describe("POST /like", () => {
+    it("it should like the first tweet from test2@test.com (test@test.com)", (done) => {
+      chai.request(app).post(`/api/tweets/like/${user2tweet1}`)
+      .auth(token1, { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        expect(res.body.likes.length).to.eq(1);
+        done();
+      });
+    });
+    it("it should like the first tweet from test2@test.com (test2@test.com)", (done) => {
+      chai.request(app).post(`/api/tweets/like/${user2tweet1}`)
+      .auth(token2, { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        expect(res.body.likes.length).to.eq(2);
+        done();
+      });
+    });
+    it("it should UNlike the first tweet from test2@test.com (test@test.com)", (done) => {
+      chai.request(app).post(`/api/tweets/like/${user2tweet1}`)
+      .auth(token1, { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        expect(res.body.likes.length).to.eq(1);
+        done();
+      });
+    });
+    it("it should NOT like/unlike the tweet (tweet not found)", (done) => {
+      let obj = new mongoose.Types.ObjectId();
+      chai.request(app).post(`/api/tweets/like/${obj}`)
+      .auth(token1, { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(400);
+        expect(res.body.error).to.eq("Tweet not found!");
         done();
       });
     });
