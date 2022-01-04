@@ -2,4 +2,5 @@
 describe("/api", () => {
   require("./users.test");
   require("./messages.test");
+  require("./tweets.test");
 });

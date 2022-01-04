@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
 
-//User model
+//Models
 const User = require("../models/User");
 
 exports.register = (req, res) => {

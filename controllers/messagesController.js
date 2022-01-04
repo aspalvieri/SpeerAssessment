@@ -1,7 +1,7 @@
 //Input validation
 const validateMessageInput = require("../validation/message");
 
-//User model
+//Models
 const User = require("../models/User");
 const Message = require("../models/Message");
 
