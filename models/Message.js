@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Create Schema
+//Create Schema
 const MessageSchema = new Schema({
-  sender_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "users",
+  sender_email: {
+    type: String,
     required: true
   },
   message: {
     type: String,
+    maxlength: 120,
     required: true
   }
 }, {

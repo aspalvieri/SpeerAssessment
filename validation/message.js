@@ -19,6 +19,9 @@ module.exports = function validateLoginInput(data, user) {
   if (Validator.isEmpty(data.message)) {
     errors.message = "Message field is required";
   }
+  else if (!Validator.isLength(data.message, { min: 1, max: 120 })) {
+    errors.message = "Message length greater than 120";
+  }
   return {
     errors,
     isValid: isEmpty(errors)

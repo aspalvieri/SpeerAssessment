@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Create Schema
+//Create Schema
 const UserSchema = new Schema({
   email: {
     type: String,
@@ -15,6 +15,12 @@ const UserSchema = new Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "messages"
+    }
+  ],
+  tweets: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "tweets"
     }
   ]
 }, {

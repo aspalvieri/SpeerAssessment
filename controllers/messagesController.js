@@ -20,7 +20,7 @@ exports.sendMessage = (req, res) => {
       return res.status(400).json({ email: "User not found!" });
     }
     const newMessage = {
-      sender_id: req.user.id,
+      sender_email: req.user.email,
       message: req.body.message
     };
     //Create new message and add it to the receiver's list of messages

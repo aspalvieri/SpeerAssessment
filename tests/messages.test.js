@@ -72,6 +72,20 @@ describe("/messages", () => {
         done();
       });
     });
+    it("it should NOT send a message to test2@test.com (message length greater than 120)", (done) => {
+      let message = {
+        email: "test2@test.com",
+        message: "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901"
+      };
+      chai.request(app).post("/api/messages/send")
+      .auth(token1, { type: "bearer" })
+      .send(message)
+      .end((err, res) => {
+        expect(res.status).to.eq(400);
+        expect(res.body.message).to.eq("Message length greater than 120");
+        done();
+      });
+    });
     it("it should NOT send a message to testA@test.com (user not found)", (done) => {
       let message = {
         email: "testA@test.com",
