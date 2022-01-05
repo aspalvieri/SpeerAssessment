@@ -13,7 +13,7 @@ secret="YourSecret"
 4. Type "npm test" and ensure all tests passed (NOTE: test script is set for Windows).
 
 ## Overview
-The backend application for a twitter clone. All of the API calls and descriptions are listed below. A section of code I was proud of is the authentication routes. I created a middleware named "authorize", and it will ensure that the request has a valid JWT token. It will then decode it and pass the data onto the next route. This allows me to ensure that the user is logged in, and allows me to easily access their ID and email fields.\
+The backend application for a twitter clone. All of the API calls and descriptions are listed below. A section of code I was proud of is the authentication routes. I created a middleware named "authorize", and it will ensure that the request has a valid JWT token. It will then decode it and pass the data onto the next route. This allows me to ensure that the user is logged in, and allows me to easily access their ID and email fields. If the authorize fails, a 403 error is returned instead.\
 An example of how this works is as follows:
 ```js
 router.post("/post", auth, tweetsController.postTweet);
@@ -34,7 +34,7 @@ Sent object:
 {
   email: String, email address,
   password: String, 6-36 characters,
-  password2: String, equal to password
+  password2: String, must be equal to password
 }
 
 Returned object:
@@ -58,7 +58,7 @@ Sent object:
 Returned object:
 {
   success: true,
-  token: JWT token
+  token: JWT bearer token
 }
 ```
 
