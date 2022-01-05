@@ -225,6 +225,11 @@ Returned object:
 **Requires authentication**\
 Adds a reply to the specified tweet. Returns the replied tweet.
 ```
+Sent object:
+{
+  message: String, 120 character limit
+}
+
 Returned object:
 {
   user_id: Object ID, owner of tweet,
