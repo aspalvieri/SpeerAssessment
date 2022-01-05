@@ -283,4 +283,44 @@ describe("/tweets", () => {
       });
     });
   });
+  describe("POST /reply", () => {
+    it("it should post a reply to test@test.com's second tweet", (done) => {
+      let message = {
+        message: "This is a reply."
+      };
+      chai.request(app).post(`/api/tweets/reply/${user1tweet2}`)
+      .auth(token2, { type: "bearer" })
+      .send(message)
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        done();
+      });
+    });
+    it("it should post a reply to test@test.com's second tweet", (done) => {
+      let message = {
+        message: "This is another reply."
+      };
+      chai.request(app).post(`/api/tweets/reply/${user1tweet2}`)
+      .auth(token2, { type: "bearer" })
+      .send(message)
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        done();
+      });
+    });
+    it("it should NOT post a reply to the tweet (tweet not found)", (done) => {
+      let message = {
+        message: "This is a reply."
+      };
+      let obj = mongoose.Types.ObjectId();
+      chai.request(app).post(`/api/tweets/reply/${obj}`)
+      .auth(token2, { type: "bearer" })
+      .send(message)
+      .end((err, res) => {
+        expect(res.status).to.eq(400);
+        expect(res.body.error).to.eq("Tweet not found!");
+        done();
+      });
+    });
+  });
 });

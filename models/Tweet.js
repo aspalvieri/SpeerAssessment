@@ -32,6 +32,20 @@ const TweetSchema = new Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "users"
     }
+  ],
+  //Array of objects for replies to the tweet.
+  //Reply has email of the replier, and the message typed
+  replies: [
+    {
+      email: {
+        type: String,
+        required: true
+      },
+      message: {
+        type: String,
+        required: true
+      }
+    }
   ]
 }, {
   timestamps: true

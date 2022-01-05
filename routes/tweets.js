@@ -18,5 +18,6 @@ router.post("/update/:id", auth, tweetsController.updateTweet);
 router.post("/like/:id", auth, tweetsController.likeTweet);
 
 router.post("/retweet/:id", auth, tweetsController.retweet);
+router.post("/reply/:id", auth, tweetsController.reply);
 
 module.exports = router;

@@ -120,3 +120,25 @@ exports.retweet = (req, res) => {
     }).catch(err => console.log(err));
   }).catch(err => console.log(err));
 };
+
+//Returns the tweet object that was replied to
+exports.reply = (req, res) => {
+  //Form Validation
+  const { errors, isValid } = validateTweetInput(req.body);
+
+  //Check validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  const reply = {
+    email: req.user.email,
+    message: req.body.message
+  }
+  Tweet.findOneAndUpdate({ _id: req.params.id }, { "$push": { replies: reply } }, { new: true }).then(tweet => {
+    if (!tweet) {
+      return res.status(400).json({ error: "Tweet not found!" });
+    }
+    res.status(200).json(tweet);
+  }).catch(err => console.log(err));
+};
