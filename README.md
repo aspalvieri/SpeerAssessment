@@ -2,9 +2,9 @@
 **Task 1: Twitter**
 
 ## Installation
-1. Type "npm init" to install all dependencies.
+1. Type "npm install" to install all dependencies (NOTE: I used Node version 16.13.1).
 2. Create environment variables file ".env" in the root folder.
-3. Setup .env file as below:
+3. Setup .env file as below (NOTE: only need TEST database if just running tests):
 ```
 DB_TEST_URL="connection string to MongoDB TEST database"
 DB_DEV_URL="connection string to MongoDB DEV database"
@@ -12,8 +12,19 @@ secret="YourSecret"
 ```
 4. Type "npm test" and ensure all tests passed (NOTE: test script is set for Windows).
 
+## Overview
+The backend application for a twitter clone. All of the API calls and descriptions are listed below. A section of code I was proud of is the authentication routes. I created a middleware named "authorize", and it will ensure that the request has a valid JWT token. It will then decode it and pass the data onto the next route. This allows me to ensure that the user is logged in, and allows me to easily access their ID and email fields.\
+An example of how this works is as follows:
+```js
+router.post("/post", auth, tweetsController.postTweet);
+```
+Then, from the tweetsController.postTweet, I can access the user's ID by the following:
+```js
+req.user.id;
+```
+
 ## API Calls
-All of the possible routes and what they do/return. If an API says "Requires authentication", that means you must send it a JWT token through either the x-access-token header or the authorization header. The sent object is what you need to pass in the body of the request. The returned object assumes the call was successful:
+If an API says "Requires authentication", that means you must send it a JWT token through either the x-access-token header or the authorization header. The sent object is what you need to pass in the body of the request. The returned object assumes the call was successful:
 
 ### /api/users
 ### POST: /api/users/register
