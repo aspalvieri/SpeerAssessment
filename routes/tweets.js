@@ -17,4 +17,6 @@ router.post("/update/:id", auth, tweetsController.updateTweet);
 //Handles liking/unliking a post
 router.post("/like/:id", auth, tweetsController.likeTweet);
 
+router.post("/retweet/:id", auth, tweetsController.retweet);
+
 module.exports = router;

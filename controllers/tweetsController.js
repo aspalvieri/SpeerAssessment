@@ -5,6 +5,7 @@ const validateTweetInput = require("../validation/tweet");
 const User = require("../models/User");
 const Tweet = require("../models/Tweet");
 
+//Returns the posted tweet object
 exports.postTweet = (req, res) => {
   //Form Validation
   const { errors, isValid } = validateTweetInput(req.body);
@@ -17,15 +18,17 @@ exports.postTweet = (req, res) => {
   //Create tweet and add it to user's tweets
   const newTweet = {
     user_id: req.user.id,
+    origin_id: req.user.id,
     message: req.body.message
   }
   Tweet.create(newTweet).then(tweet => {
     User.findOneAndUpdate({ _id: req.user.id }, { "$push": { tweets: tweet.id } }, { new: true }).then(user => {
-      res.status(200).json(user);
+      res.status(200).json(tweet);
     }).catch(err => console.log(err));
   }).catch(err => console.log(err));
 };
 
+//Returns array of user's tweet objects
 exports.getTweets = (req, res) => {
   //Get the email from either the request, or the logged in user
   const email = req.params.email || req.user.email;
@@ -39,17 +42,19 @@ exports.getTweets = (req, res) => {
   }).catch(err => console.log(err));
 };
 
+//Returns the user's tweet objects
 exports.deleteTweet = (req, res) => {
   User.findOneAndUpdate({ _id: req.user.id }, { "$pullAll": { tweets: [req.params.id] } }, { new: true }).then(user => {
     if (!user) {
       return res.status(400).json({ email: "User not found!" });
     }
     Tweet.findOneAndDelete({ _id: req.params.id, user_id: req.user.id }).then(tweet => {
-      res.status(200).json(user);
+      res.status(200).json(user.tweets);
     });
   }).catch(err => console.log(err));
 };
 
+//Returns the updated tweet object
 exports.updateTweet = (req, res) => {
   //Form Validation
   const { errors, isValid } = validateTweetInput(req.body);
@@ -67,13 +72,16 @@ exports.updateTweet = (req, res) => {
   }).catch(err => console.log(err));
 };
 
+//Returns the liked tweet
 exports.likeTweet = (req, res) => {
   Tweet.findOne({ _id: req.params.id }).then(tweet => {
     if (!tweet) {
       return res.status(400).json({ error: "Tweet not found!" });
     }
 
+    //Debounce
     let found = false;
+
     //If we have liked it already, unlike it:
     tweet.likes = tweet.likes.filter(like => {
       if (like.toString() === req.user.id) {
@@ -90,6 +98,25 @@ exports.likeTweet = (req, res) => {
 
     tweet.save().then(savedTweet => {
       res.status(200).json(savedTweet);
+    }).catch(err => console.log(err));
+  }).catch(err => console.log(err));
+};
+
+//Returns the reposted tweet object
+exports.retweet = (req, res) => {
+  Tweet.findOne({ _id: req.params.id }).then(tweet => {
+    if (!tweet) {
+      return res.status(400).json({ error: "Tweet not found!" });
+    }
+    let retweet = {
+      user_id: req.user.id,
+      origin_id: tweet.origin_id,
+      message: tweet.message
+    }
+    Tweet.create(retweet).then(newTweet => {
+      User.findOneAndUpdate({ _id: req.user.id }, { "$push": { tweets: newTweet.id } }, { new: true }).then(user => {
+        res.status(200).json(newTweet);
+      }).catch(err => console.log(err));
     }).catch(err => console.log(err));
   }).catch(err => console.log(err));
 };

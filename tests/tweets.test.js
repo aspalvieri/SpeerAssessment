@@ -43,7 +43,7 @@ describe("/tweets", () => {
       .auth(token1, { type: "bearer" })
       .send(message)
       .end((err, res) => {
-        user1tweet1 = res.body.tweets[0];
+        user1tweet1 = res.body._id;
         expect(res.status).to.eq(200);
         done();
       });
@@ -56,7 +56,7 @@ describe("/tweets", () => {
       .auth(token1, { type: "bearer" })
       .send(message)
       .end((err, res) => {
-        user1tweet2 = res.body.tweets[1];
+        user1tweet2 = res.body._id;
         expect(res.status).to.eq(200);
         done();
       });
@@ -69,7 +69,7 @@ describe("/tweets", () => {
       .auth(token2, { type: "bearer" })
       .send(message)
       .end((err, res) => {
-        user2tweet1 = res.body.tweets[0];
+        user2tweet1 = res.body._id;
         expect(res.status).to.eq(200);
         done();
       });
@@ -167,7 +167,7 @@ describe("/tweets", () => {
       .end((err, res) => {
         //This will return success, even if it delete nothing
         expect(res.status).to.eq(200);
-        //To ensure it didn't delete someone elses tweet, we'll get their tweets
+        //To ensure it didn't delete someone else's tweet, we'll get their tweets
         chai.request(app).get("/api/tweets/test@test.com")
         .send()
         .end((err, res) => {
@@ -182,7 +182,7 @@ describe("/tweets", () => {
       .send()
       .end((err, res) => {
         expect(res.status).to.eq(200);
-        expect(res.body.tweets.length).to.eq(1);
+        expect(res.body.length).to.eq(1);
         done();
       });
     });
@@ -227,6 +227,59 @@ describe("/tweets", () => {
         expect(res.status).to.eq(400);
         expect(res.body.error).to.eq("Tweet not found!");
         done();
+      });
+    });
+  });
+  describe("POST /retweet", () => {
+    it("it should retweet test2@test.com's first tweet under test@test.com", (done) => {
+      chai.request(app).post(`/api/tweets/retweet/${user2tweet1}`)
+      .auth(token1, { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        expect(res.body.origin_id).to.eq(user2.id);
+        expect(res.body.user_id).to.eq(user1.id);
+        chai.request(app).get("/api/tweets")
+        .auth(token1, { type: "bearer" })
+        .send()
+        .end((err, res) => {
+          expect(res.body.length).to.eq(2);
+          done();
+        })
+      });
+    });
+    it("it should retweet test@test.com's second tweet under test2@test.com", (done) => {
+      chai.request(app).post(`/api/tweets/retweet/${user1tweet2}`)
+      .auth(token2, { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(200);
+        expect(res.body.origin_id).to.eq(user1.id);
+        expect(res.body.user_id).to.eq(user2.id);
+        chai.request(app).get("/api/tweets")
+        .auth(token2, { type: "bearer" })
+        .send()
+        .end((err, res) => {
+          expect(res.body.length).to.eq(2);
+          done();
+        })
+      });
+    });
+    it("it should NOT retweet user's tweet (tweet not found)", (done) => {
+      let obj = new mongoose.Types.ObjectId();
+      chai.request(app).post(`/api/tweets/retweet/${obj}`)
+      .auth(token1, { type: "bearer" })
+      .send()
+      .end((err, res) => {
+        expect(res.status).to.eq(400);
+        expect(res.body.error).to.eq("Tweet not found!");
+        chai.request(app).get("/api/tweets")
+        .auth(token1, { type: "bearer" })
+        .send()
+        .end((err, res) => {
+          expect(res.body.length).to.eq(2);
+          done();
+        })
       });
     });
   });
