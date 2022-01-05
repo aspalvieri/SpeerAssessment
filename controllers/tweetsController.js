@@ -42,7 +42,7 @@ exports.getTweets = (req, res) => {
   }).catch(err => console.log(err));
 };
 
-//Returns the user's tweet objects
+//Returns array of user's tweet objects
 exports.deleteTweet = (req, res) => {
   User.findOneAndUpdate({ _id: req.user.id }, { "$pullAll": { tweets: [req.params.id] } }, { new: true }).then(user => {
     if (!user) {

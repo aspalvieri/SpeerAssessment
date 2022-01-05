@@ -5,6 +5,7 @@ const validateMessageInput = require("../validation/message");
 const User = require("../models/User");
 const Message = require("../models/Message");
 
+//Returns an object with `success: true`
 exports.sendMessage = (req, res) => {
   //Form Validation
   const { errors, isValid } = validateMessageInput(req.body, req.user);
@@ -27,7 +28,7 @@ exports.sendMessage = (req, res) => {
     Message.create(newMessage).then(message => {
       user.messages.push(message);
       user.save().then(savedUser => {
-        res.status(200).json(savedUser);
+        res.status(200).json({ success: true });
       }).catch(err => console.log(err));
     }).catch(err => console.log(err));
   }).catch(err => console.log(err));
