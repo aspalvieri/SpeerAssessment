@@ -24,7 +24,7 @@ req.user.id;
 ```
 
 ## API Calls
-If an API says "Requires authentication", that means you must send it a JWT token through either the x-access-token header or the authorization header. The sent object is what you need to pass in the body of the request. The returned object assumes the call was successful:
+If an API says "Requires authentication", that means you must send it a JWT token through either the x-access-token header or the authorization header. The sent object is what you need to pass in the body of the request. The returned object is what the API returns, assuming it was successful:
 
 ### /api/users
 ### POST: /api/users/register
